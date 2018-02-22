@@ -1,0 +1,11 @@
+span{
+  opacity: 0.5;
+}  
+
+mat-list-item{
+  border-bottom : 1px solid rgba(128,128,128,.1);
+}
+
+.table{
+  height : 100vh;
+}

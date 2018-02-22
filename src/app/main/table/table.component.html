@@ -1,0 +1,13 @@
+<div class="table">
+  <mat-list dense>
+    <mat-list-item *ngFor="let element of list" (click)="showDetail(element.id,element.payload)">
+      <h3 mat-line>{{element.from}}</h3>
+      <p mat-line> 
+        <span>{{element.subject}}</span>
+        <br/> 
+        <span>{{element.snippet}}</span>
+      </p>
+    </mat-list-item>
+    <mat-divider></mat-divider>
+  </mat-list> 
+</div>

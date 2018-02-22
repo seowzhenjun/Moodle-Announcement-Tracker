@@ -1,0 +1,13 @@
+<div class="main">
+    <mat-sidenav-container class="example-container">
+        <mat-sidenav id="sidenav" #sidenav mode="'over'" class="mat-elevation-z3" fixedInViewport="true" style="width:80vw"
+        fxLayout="column" fxLayoutAlign="start center">
+            <app-sidebar [userDetail]="userdetail"></app-sidebar>
+        </mat-sidenav>
+        <mat-sidenav-content fxLayout="column" fxLayoutAlign="space-between none">
+            <!-- <button mat-raised-button color='primary' (click)='history()'>History List</button> -->
+            <app-topbar class="topbar" (menuToggle)="sidenav.toggle()"></app-topbar>
+            <router-outlet></router-outlet>
+        </mat-sidenav-content>
+    </mat-sidenav-container>
+</div>

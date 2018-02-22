@@ -1,0 +1,12 @@
+<div fxLayout="column" fxLayoutAlign=" none" >
+    <mat-card>
+        <mat-card-header>
+            <div class="userImg" mat-card-avatar *ngIf="userDetail.imageUrl" [style.background-image]="'url(' + userDetail.imageUrl + ')'"></div>
+            <mat-card-title>{{userDetail.displayName}}</mat-card-title>
+            <mat-card-subtitle>{{userDetail.email}}</mat-card-subtitle>
+        </mat-card-header>
+    </mat-card>
+    <button mat-raised-button color = "primary">Inbox</button>
+    <button mat-raised-button color = "primary">Settings</button>
+    <button mat-raised-button color = "primary" (click)="signOut()">Logout</button>
+</div>

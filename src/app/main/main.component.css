@@ -1,0 +1,13 @@
+/* .main{
+    width : 100vw;
+    height : 100vw;
+} */
+
+#sidenav { 
+    width : 50vw;
+}
+
+.topbar{
+    position: sticky;
+    top : 0px;
+}
