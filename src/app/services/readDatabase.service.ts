@@ -2,6 +2,7 @@ import { Injectable } from '@angular/core';
 import * as firebase from 'firebase';
 
 import { GmailhttpService } from '../main/gmailhttp/gmailhttp.service';
+import { oAuth2Service } from '../main/gmailhttp/oAuth2.service';
 import { DataService } from '../main/data.service';
 declare var window;
 
@@ -10,8 +11,9 @@ export class ReadDatabase {
 
     database : any = firebase.database();
     constructor(
-        private _http : GmailhttpService,
-        private _service : DataService
+        private _http    : GmailhttpService,
+        private _service : DataService,
+        private _oAuth2  : oAuth2Service
     ){}
 
     getAccessToken(email){
@@ -21,7 +23,7 @@ export class ReadDatabase {
             snapshot => {
                 let dbkey = Object.keys(snapshot.val())[0];
                 snapshot.forEach(childSnapshot=>{
-                    this._http.getAccessToken(childSnapshot.val().refreshToken).subscribe(
+                    this._oAuth2.getAccessToken(childSnapshot.val().refreshToken).subscribe(
                         accessToken => {
                             for ( var key in accessToken){
                                 if (key === 'access_token'){
@@ -63,6 +65,7 @@ export class ReadDatabase {
     }
 
     changeLocalEmail(list){
+        console.log(list);
         let obj = JSON.parse(window.localStorage.getItem('obj'));
         list.forEach(element => {
             if(element.messagesAdded){
@@ -70,8 +73,9 @@ export class ReadDatabase {
                     msg=>{
                         this._http.getMsg(obj.email,msg.message.id,obj.accessToken).subscribe(
                             newEmail => {
-                                this.getEmailDetail(newEmail);
-                            }
+                                this.getEmailDetail(newEmail,false);
+                            },
+                            err => console.log(err)
                         );
                     }
                 )
@@ -95,23 +99,39 @@ export class ReadDatabase {
         })
     }
 
-    getEmailDetail(email){
-        let emailList = JSON.parse(window.localStorage.getItem('email'));
-          var item = email.payload.headers;
-          let body : any = {};
-          body['snippet'] = email.snippet;
-          body['id']=email.id;
-          body['payload']=email.payload;
-          for(var x=0; x<item.length; x++){
-    
-            if(item[x].name === "From"){
-              body['from'] = item[x].value.split('<')[0];
+    getEmailDetail(email,push){
+
+        let list = JSON.parse(window.localStorage.getItem('email'));
+        let emailList:emailList[] = list === null? [] : list; 
+        for(var i=0; i<email.length; i++){
+            let item = email[i].payload.headers;
+            let body = {} as emailList;
+      
+            body['snippet']     = email[i].snippet;
+            body['id']          = email[i].id;
+            body['payload']     = email[i].payload;
+            body['internalDate']= email[i].internalDate;
+            body['labelIds']    = email[i].labelIds;
+            body['important']   = false;
+            for(var x=0; x<item.length; x++){
+      
+              if(item[x].name === "From"){
+                body['from'] = item[x].value.split('<')[0];
+              }
+              if(item[x].name === "Subject"){
+                body['subject'] = item[x].value;
+              }
             }
-            if(item[x].name === "Subject"){
-              body['subject'] = item[x].value;
+            //console.log(body);
+            if(push){
+                emailList.push(body);
+            }
+            else{
+                console.log(body);
+                emailList.unshift(body);
             }
           }
-          emailList.unshift(body);
+          //console.log(emailList);
         window.localStorage.setItem('email',JSON.stringify(emailList));
         this._service.sendList(emailList);
       }
@@ -120,7 +140,18 @@ export class ReadDatabase {
         let emailList = JSON.parse(window.localStorage.getItem('email'));
         let index = emailList.findIndex(x => x.id === id);
         emailList.splice(index,1);
-        this._service.sendList(emailList);
         window.localStorage.setItem('email',JSON.stringify(emailList));
+        this._service.sendList(emailList);
     }
 }
+
+export interface emailList {
+    snippet       : string;
+    id            : string;
+    payload       : string;
+    internalDate  : string;
+    labelIds      : string[];
+    from          : string;
+    subject       : string;
+    important     : boolean;
+  }

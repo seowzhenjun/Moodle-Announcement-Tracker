@@ -4,9 +4,6 @@ import { HttpClient, HttpHeaders, HttpParams } from '@angular/common/http';
 @Injectable()
 export class GmailhttpService {
 
-  clientID = "MY_CLIENT_ID";
-  clientSecret = "MY_SECRET";
-
   constructor(private http: HttpClient) { }
 
   listMsg(email,accessToken,nextPageToken? : string){
@@ -65,52 +62,21 @@ export class GmailhttpService {
     return this.http.get(url,requestOptions);
   }
 
-  getRefreshToken(serverAuthCode){
-    const url = 'https://www.googleapis.com/oauth2/v4/token';
-    const redirectURI = 'http://localhost:8000';
-    const grantType = 'authorization_code';
+  modify(id,email,accessToken){
+    const url = `https://www.googleapis.com/gmail/v1/users/${email}/messages/${id}/modify`;
     const headerDict = {
-      'Content-Type': 'application/x-www-form-urlencoded'
+      'Content-Type' : 'application/json',
+      'Authorization': `Bearer ${accessToken}`
     };
-
-    let body = `code=${serverAuthCode}&client_id=${this.clientID}&client_secret=${this.clientSecret}&grant_type=${grantType}&redirect_uri=${redirectURI}`;
-    const requestOptions = {
-      headers : new HttpHeaders (headerDict)
-    };
-    
-    return this.http.post(url,body.toString(), requestOptions);
-  }
-
-  getAccessToken(refreshToken){
-    const url = 'https://www.googleapis.com/oauth2/v4/token';
-    const grantType = 'refresh_token';
-    const headerDict = {
-      'Content-Type': 'application/x-www-form-urlencoded'
-    };
-    let body = `client_id=${this.clientID}&client_secret=${this.clientSecret}&refresh_token=${refreshToken}&grant_type=${grantType}`;
+    const body = {
+      removeLabelIds : [
+        "UNREAD"
+      ]
+    }
     const requestOptions = {
       headers : new HttpHeaders (headerDict)
     };
 
     return this.http.post(url,body,requestOptions);
-  }
-
-  addData(email,regToken,refreshToken){
-    const url = 'https://us-central1-moodle-announcement-trac-347e7.cloudfunctions.net/addData';
-    const body = {
-      name        : email,
-      regToken    : regToken,
-      refreshToken: refreshToken
-    };
-    return this.http.post(url,body);
-  }
-
-  unsubscribe(email,regToken){
-    const url = 'https://us-central1-moodle-announcement-trac-347e7.cloudfunctions.net/unsubscribe';
-    const body = {
-      name    : email,
-      regToken: regToken
-    };
-    return this.http.post(url,body);
   }
 }

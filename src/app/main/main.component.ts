@@ -26,65 +26,49 @@ export class MainComponent implements OnInit {
     }
   }
 
-  emailList : any = [{}];
   userdetail : any = {};
   nextPageToken : string;
   fetch : boolean = true;
-  serverAuthCode : string ;
-  regToken : string ;
-  splice = false;
 
   constructor(
-    private _http : GmailhttpService,
+    private _http    : GmailhttpService,
     private _service : DataService,
-    private _user : UserInfoService,
-    private _db : ReadDatabase ) 
+    private _user    : UserInfoService,
+    private _db      : ReadDatabase ) 
     {}
 
   ngOnInit() {
-    this._user.currentMessage.subscribe(obj => {
-      if(obj !== ""){
-        // Use email from local storage if any
-        let localStorageEmail = window.localStorage.getItem('email');
-        if(localStorageEmail !== null){
-          this._db.getAccessToken(obj.email);
-          this._service.sendList(JSON.parse(localStorageEmail));
-          this.userdetail = obj;
-        }
-        else{
-          this.userdetail = obj;
-          this.listMsg();
-          this.serverAuthCode = obj.serverAuthCode;
-        }
-      } 
-    });
-    // firebase.messaging().onMessage( message => {
-    //   console.log(message);
-    // cordova.plugins.notification.local.schedule({
-    //   title: 'My first notification',
-    //   text: 'Thats pretty easy...',
-    //   foreground: true,
-    //   actions: [
-    //     { id: 'yes', title: 'Yes' },
-    //     { id: 'no',  title: 'No' }
-    //   ]
-    // });
-    // });
+    let obj = JSON.parse(window.localStorage.getItem('obj'));
+    if(obj !== ""){
+      this.userdetail = obj;
+      // Use email from local storage if any
+      let localStorageEmail = window.localStorage.getItem('email');
+      if(localStorageEmail !== null){
+        this._db.getAccessToken(obj.email);
+        this._service.sendList(JSON.parse(localStorageEmail));
+      }
+      else{
+        this.listMsg();
+      }
+    }
 
-    // window.FirebasePlugin.onNotificationOpen(function(notification) {
-    //     console.log(notification);
-    //     cordova.plugins.notification.local.schedule({
-    //       title: 'My first notification',
-    //       text: 'Thats pretty easy...',
-    //       foreground: true,
-    //       actions: [
-    //         { id: 'yes', title: 'Yes' },
-    //         { id: 'no',  title: 'No' }
-    //       ]
-    //     });
-    // }, function(error) {
-    //     console.error(error);
-    // });
+    document.addEventListener("deviceready",()=>{
+      window.FirebasePlugin.onNotificationOpen(function(notification) {
+        this._db.getAccessToken(obj.email);
+          // console.log(notification);
+          // cordova.plugins.notification.local.schedule({
+          //   title: 'My first notification',
+          //   text: 'Thats pretty easy...',
+          //   foreground: true,
+          //   actions: [
+          //     { id: 'yes', title: 'Yes' },
+          //     { id: 'no',  title: 'No' }
+          //   ]
+          // });
+      }, function(error) {
+          console.error(error);
+      });
+    },false);
   }
 
   listMsg(nextPageToken?){
@@ -119,7 +103,8 @@ export class MainComponent implements OnInit {
         }
         Promise.all(promiseArr).then(val => {
           let msgArr = this.sortMsg(val);
-          this.getEmailDetail(msgArr);
+          this._db.getEmailDetail(msgArr,true);
+          this.fetch = true;
         });
       }
     };
@@ -141,42 +126,4 @@ export class MainComponent implements OnInit {
     }
     return msgArr;
   }
-
-  getEmailDetail(email){
-    var arr : any =[];
-    for(var i=0; i<email.length; i++){
-      //var htmlBody = this.getBody(email[i].payload);
-      //console.log(htmlBody);
-      var item = email[i].payload.headers;
-      let body : any = {};
-      body['snippet'] = email[i].snippet;
-      body['id']=email[i].id;
-      body['payload']=email[i].payload;
-      for(var x=0; x<item.length; x++){
-
-        if(item[x].name === "From"){
-          body['from'] = item[x].value.split('<')[0];
-        }
-        if(item[x].name === "Subject"){
-          body['subject'] = item[x].value;
-        }
-      }
-      this.emailList.push(body);
-    }
-    this.fetch = true;
-    window.localStorage.setItem('email',JSON.stringify(this.emailList));
-    if(!this.splice){
-      this.emailList.splice(0,1);
-      this.splice = !this.splice;
-    }
-    this._service.sendList(this.emailList);
-  }
-
-  // history(){
-  //   let obj = JSON.parse(window.localStorage.getItem('obj'));
-  //   let hist = window.localStorage.getItem('historyId');
-  //   this._http.historyList(obj.email,obj.accessToken,hist).subscribe(
-  //     changes => console.log(changes)
-  //   );
-  // }
 }

@@ -1,4 +1,4 @@
-<div fxLayout="column" fxLayoutAlign=" none" >
+<div class='sidebar' fxLayout="column" fxLayoutAlign=" none" >
     <mat-card>
         <mat-card-header>
             <div class="userImg" mat-card-avatar *ngIf="userDetail.imageUrl" [style.background-image]="'url(' + userDetail.imageUrl + ')'"></div>
@@ -6,7 +6,9 @@
             <mat-card-subtitle>{{userDetail.email}}</mat-card-subtitle>
         </mat-card-header>
     </mat-card>
-    <button mat-raised-button color = "primary">Inbox</button>
-    <button mat-raised-button color = "primary">Settings</button>
-    <button mat-raised-button color = "primary" (click)="signOut()">Logout</button>
+    <button mat-raised-button color = "primary" fxLayoutAlign=" center" (click)="inbox()"><mat-icon fxFlex="10">inbox</mat-icon><span fxFlex fxLayoutAlign="center center">Inbox</span></button>
+    <button mat-raised-button color = "primary" fxLayoutAlign="center center"><mat-icon>star</mat-icon>Important</button>
+    <button mat-raised-button color = "primary" fxLayoutAlign="center center" (click)="settings()"><mat-icon>settings</mat-icon>Settings</button>
+    <button mat-raised-button color = "primary" fxLayoutAlign="center center" (click)="help()"><mat-icon>help</mat-icon>Help and feedback</button>
+    <button mat-raised-button color = "primary" fxLayoutAlign="center center" (click)="signOut()"><mat-icon>exit_to_app</mat-icon>Logout</button>
 </div>

@@ -31,11 +31,10 @@ export class AuthGuard implements CanActivate {
     let obj = window.localStorage.getItem('obj');
     if(obj){
         this.authService.firstLogin=false;
-        this._user.sendUserInfo(JSON.parse(obj));
         this.authService.isLoggedIn = true;
         let redirect = this.authService.redirectUrl ? this.authService.redirectUrl : '/main/table';
         // Redirect the user
-        this.router.navigate([redirect],{ skipLocationChange: true });
+        this.router.navigate([redirect],{ replaceUrl: true });
     }
     else {
       // User is signed out.
@@ -43,33 +42,5 @@ export class AuthGuard implements CanActivate {
       this.router.navigate(['/login']);
       return false;
     }
-
-    // firebase.auth().onAuthStateChanged(user => {
-    //   if (user) {
-    //     // User is signed in.
-    //     // Use silentLogin() to get user's accessToken
-    //     window.plugins.googleplus.trySilentLogin(
-    //       {
-    //         'scopes' : this.SCOPES,
-    //         'webClientId': this.CLIENT_ID
-    //       },
-    //       obj => {
-    //         this._user.sendUserInfo(obj);
-    //         this.authService.isLoggedIn = true;
-    //         let redirect = this.authService.redirectUrl ? this.authService.redirectUrl : '/main/table';
-    //         // Redirect the user
-    //         this.router.navigate([redirect],{ skipLocationChange: true });
-    //       },
-    //       err => {
-    //         console.log("error : " + JSON.stringify(err));
-    //       }
-    //     );
-    //   } else {
-    //     // User is signed out.
-    //     // Navigate to the login page with extras
-    //     this.router.navigate(['/login']);
-    //     return false;
-    //   }
-    // });
   }
 }

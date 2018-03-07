@@ -1,0 +1,38 @@
+<div class='getStarted'>
+  <p class='introText'>Complete the following steps to set up keywords that are important to you.</p>
+
+  <mat-vertical-stepper [linear]="isLinear" #stepper="matVerticalStepper">
+    <mat-step [stepControl]="form">
+      <form [formGroup]="form">
+        <ng-template matStepLabel>Choose your faculty</ng-template>
+        <mat-form-field>
+          <mat-select placeholder="Choose one or more" [formControl]="form.controls['faculty']" multiple>
+            <mat-option *ngFor="let faculty of facultyList" [value]="faculty">{{faculty}}</mat-option>
+          </mat-select>
+        </mat-form-field>
+        <div>
+          <button mat-button matStepperNext (click)='submit()'>Next</button>
+        </div>
+      </form>
+    </mat-step>
+    <mat-step [stepControl]="form">
+      <form [formGroup]="form">
+        <ng-template matStepLabel>Choose from common words</ng-template>
+        <mat-chip-list class="mat-chip-list-stacked">
+          <mat-chip *ngFor="let chip of commonWords" selected="true" [color]="primary" fxLayoutAlign="space between none">
+            <span>{{chip}}</span>
+            <mat-checkbox></mat-checkbox>
+          </mat-chip>
+        </mat-chip-list>        
+      </form>
+    </mat-step>
+    <mat-step>
+      <ng-template matStepLabel>Done</ng-template>
+      You are now done.
+      <div>
+        <button mat-button matStepperPrevious>Back</button>
+        <button mat-button (click)="stepper.reset()">Reset</button>
+      </div>
+    </mat-step>
+  </mat-vertical-stepper>
+</div>

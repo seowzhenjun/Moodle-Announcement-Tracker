@@ -2,7 +2,7 @@ import { Component, OnInit, Input } from '@angular/core';
 import { Router } from '@angular/router';
 import * as firebase from 'firebase';
 import { AuthService } from '../../services/auth.service';
-declare var window;
+import { MatSidenav } from '@angular/material';
 
 @Component({
   selector: 'app-sidebar',
@@ -12,18 +12,32 @@ declare var window;
 export class SidebarComponent implements OnInit {
   @Input() userDetail : any;
 
-  constructor(private router : Router,
-  public authService : AuthService) { }
+  constructor(
+    private router : Router,
+    private sidenav : MatSidenav,
+    public authService : AuthService
+  ) {}
 
   //headerImgUrl : string = this.userDetail.imageUrl;
   ngOnInit() {
   }
 
+  inbox(){
+    this.router.navigate(['/main/table']);
+    this.sidenav.close();
+  }
+
+  settings(){
+    this.router.navigate(['/main/settings']);
+    this.sidenav.close();
+  }
+
+  help(){
+    this.router.navigate(['/main/help']);
+    this.sidenav.close();
+  }
+
   signOut(){
     this.authService.logout();
   }
-  //   firebase.auth().signOut()
-  //   .then(()=>this.router.navigate(['/login']))
-  //   .catch(err => console.log(err));
-  // }
 }

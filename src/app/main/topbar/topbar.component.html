@@ -1,7 +1,10 @@
-<mat-toolbar color="primary" fxLayout="row" fxLayoutAlign="space-between center">
-  <!-- <mat-toolbar-row fxLayout="row" fxLayoutAlign="space-between center" > -->
+<mat-toolbar *ngIf="!highlighted" color="primary" fxLayout="row" fxLayoutAlign="space-between center">
     <button mat-icon-button (click)="toggleMenu()" fxLayoutAlign="center center"><mat-icon fxLayoutAlign="center center">menu</mat-icon></button>
     <span>Inbox</span>
     <button mat-icon-button fxLayoutAlign="center center"><mat-icon fxLayoutAlign="center center">search</mat-icon></button>
-  <!-- </mat-toolbar-row> -->
+</mat-toolbar>
+
+<mat-toolbar *ngIf="highlighted" class="highlighted" fxLayout="row" fxLayoutAlign="space-between center">
+  <button mat-icon-button fxLayoutAlign="center center" class="lightColor" (click)="cancelHighlight()"><mat-icon fxLayoutAlign="center center">arrow_back</mat-icon></button>
+  <button mat-icon-button fxLayoutAlign="center center" class="lightColor" (click)="markAsImportant()"><mat-icon fxLayoutAlign="center center">{{star}}</mat-icon></button>
 </mat-toolbar>

@@ -1,9 +1,11 @@
 import { NgModule }             from '@angular/core';
 import { RouterModule, Routes } from '@angular/router';
+
 import { AuthGuard }            from '../services/auth-guard.service';
 import { MainComponent }        from './main.component';
 import { EmailDetailComponent } from './email-detail/email-detail.component';
 import { TableComponent }       from './table/table.component';
+import { PageNotFoundComponent }from '../pageNotFound/pageNotFound.component';
 
 const mainRoutes: Routes = [
   {
@@ -13,12 +15,21 @@ const mainRoutes: Routes = [
     children : [
       {
         path: 'table',
-        component : TableComponent,
+        component : TableComponent
+      },
+      {
+        path: 'settings',
+        loadChildren : 'app/main/settings/settings.module#SettingsModule'
+      },
+      {
+        path: 'help',
+        loadChildren : 'app/main/help/help.module#HelpModule'
       },
       { 
         path: ':id', 
         component: EmailDetailComponent
-      }
+      },
+      { path: '**', component: PageNotFoundComponent }
     ] 
   }
 ];

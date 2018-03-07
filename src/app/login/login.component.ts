@@ -3,6 +3,9 @@ import { Router } from '@angular/router';
 import * as firebase from 'firebase';
 
 import { GmailhttpService } from '../main/gmailhttp/gmailhttp.service';
+import { CloudFunction } from '../main/gmailhttp/cloudFunction.service';
+import { oAuth2Service } from '../main/gmailhttp/oAuth2.service';
+
 import { UserInfoService } from '../services/user-info.service';
 import { AuthService } from '../services/auth.service';
 
@@ -15,14 +18,16 @@ declare var window;
 })
 export class LoginComponent implements OnInit {
 
-  CLIENT_ID : string ='MY_CLIENT_ID';
-  SCOPES    : string = 'https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/pubsub';
+  CLIENT_ID : string = '115491863039-5pg6f5sdgeg696rh8fq85golnk53lm92.apps.googleusercontent.com';
+  SCOPES    : string = 'https://www.googleapis.com/auth/gmail.readonly https://www.googleapis.com/auth/gmail.modify';
 
   constructor(
     public authService: AuthService,
-    private router : Router,
-    private _user : UserInfoService,
-    private _http : GmailhttpService
+    private router    : Router,
+    private _user     : UserInfoService,
+    private _http     : GmailhttpService,
+    private _cf       : CloudFunction,
+    private _oauth2   : oAuth2Service
   ) {}
 
   ngOnInit(){}
@@ -39,7 +44,7 @@ export class LoginComponent implements OnInit {
         window.FirebasePlugin.getToken(token =>{
           obj['regToken']=token;
           // Get user's refresh token
-          this._http.getRefreshToken(obj.serverAuthCode).subscribe(
+          this._oauth2.getRefreshToken(obj.serverAuthCode).subscribe(
             // Save the tokens to firebase database
             tokenObj=>{
               let refreshToken : string ;
@@ -52,77 +57,23 @@ export class LoginComponent implements OnInit {
                   obj['accessToken']=tokenObj[key];
                 }
               }
-              this._http.addData(obj.email,token,obj.refreshToken).subscribe();
+              this._cf.addData(obj.email,token,obj.refreshToken).subscribe();
             },
             err=>console.log(err)
           );
-          // save this server-side and use it to push notifications to this device
+          // save this server-side and use it for push notifications to this device
           window.localStorage.setItem('obj',JSON.stringify(obj));
-          this._user.sendUserInfo(obj);
           this.authService.firstLogin = true;
           this.authService.isLoggedIn = true;
-          // Get the redirect URL from our auth service
-          // If no redirect has been set, use the default
+          
           let redirect = this.authService.redirectUrl ? this.authService.redirectUrl : '/main/table';
-    
-          // Redirect the user
-          this.router.navigate([redirect],{skipLocationChange:true});
+          this.router.navigate([redirect],{replaceUrl:true});
         }, function(error) {
             console.error(error);
         });
-        // USer is signing in to the app for the first time
-        // if (!firebase.auth().currentUser) {
-        //   // Set auth persistance to LOCAL so that the user remain login after closing the app
-        //   firebase.auth().setPersistence(firebase.auth.Auth.Persistence.LOCAL).then(
-        //     ()=>{
-        //       firebase.auth().signInWithCredential(firebase.auth.GoogleAuthProvider.credential(obj.idToken)).then((success) => 
-        //       {
-        //         // Get user's regToken
-        //         window.FirebasePlugin.getToken(token =>{
-        //           // Get user's refresh token
-        //           this._http.getRefreshToken(obj.serverAuthCode).subscribe(
-        //             // Save the tokens to firebase database
-        //             tokenObj=>{
-        //               let refreshToken : string ;
-        //               let accessToken : string ;
-        //               for(let key in tokenObj){
-        //                 if(key === 'refresh_token'){
-        //                   refreshToken = tokenObj[key];
-        //                 }
-        //                 if(key === 'access_token'){
-        //                   accessToken = tokenObj[key];
-        //                 }
-        //               }
-        //               console.log(refreshToken);
-        //               this._http.addData(obj.email,token,accessToken,refreshToken).subscribe(
-        //                 ()=> console.log('call success!')
-        //               );
-        //             },
-        //             err=>console.log(err)
-        //           );
-        //           // save this server-side and use it to push notifications to this device
-        //           this._user.sendUserInfo(obj);
-        //           this.authService.isLoggedIn = true;
-        //           // Get the redirect URL from our auth service
-        //           // If no redirect has been set, use the default
-        //           let redirect = this.authService.redirectUrl ? this.authService.redirectUrl : '/main/table';
-            
-        //           // Redirect the user
-        //           this.router.navigate([redirect]);
-        //         }, function(error) {
-        //             console.error(error);
-        //         });
-        //       })
-        //       .catch(err => console.log(err));
-        //     });
-        // }
       },
       err => {
       }
     );
-  }
- 
-  logout() {
-    this.authService.logout();
   }
 }
