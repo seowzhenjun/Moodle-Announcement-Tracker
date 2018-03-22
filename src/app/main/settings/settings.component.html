@@ -1,6 +1,10 @@
 <div class="settings">
     <mat-list dense>
-        <mat-list-item (click)='keyword()'>Set keywords</mat-list-item>
+        <mat-list-item [routerLink]="['newFilter']">Create new filter</mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item [routerLink]="['currentFilter']">Show current filter lists</mat-list-item>
+        <mat-divider></mat-divider>
+        <mat-list-item>General settings</mat-list-item>
         <mat-divider></mat-divider>
     </mat-list>
 </div>

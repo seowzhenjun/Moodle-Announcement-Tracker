@@ -30,7 +30,14 @@ import { DateService } from './services/date.service';
     AppRoutingModule
   ],
   exports: [],
-  providers: [UserInfoService,AuthGuard,AuthService,ReadDatabase,SetKeywords,DateService],
+  providers: [
+    UserInfoService,
+    AuthGuard,
+    AuthService,
+    ReadDatabase,
+    SetKeywords,
+    DateService
+  ],
   bootstrap: [AppComponent]
 })
 export class AppModule { }

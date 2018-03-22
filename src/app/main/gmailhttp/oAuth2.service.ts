@@ -26,17 +26,17 @@ export class oAuth2Service {
     }
 
     getAccessToken(refreshToken){
-    const url = 'https://www.googleapis.com/oauth2/v4/token';
-    const grantType = 'refresh_token';
-    const headerDict = {
-        'Content-Type': 'application/x-www-form-urlencoded'
-    };
-    let body = `client_id=${this.clientID}&client_secret=${this.clientSecret}&refresh_token=${refreshToken}&grant_type=${grantType}`;
-    const requestOptions = {
-        headers : new HttpHeaders (headerDict)
-    };
+        const url = 'https://www.googleapis.com/oauth2/v4/token';
+        const grantType = 'refresh_token';
+        const headerDict = {
+            'Content-Type': 'application/x-www-form-urlencoded'
+        };
+        let body = `client_id=${this.clientID}&client_secret=${this.clientSecret}&refresh_token=${refreshToken}&grant_type=${grantType}`;
+        const requestOptions = {
+            headers : new HttpHeaders (headerDict)
+        };
 
-    return this.http.post(url,body,requestOptions);
+        return this.http.post(url,body,requestOptions);
     }
       
 }

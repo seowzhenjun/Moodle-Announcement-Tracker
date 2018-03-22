@@ -3,6 +3,8 @@ import { RouterModule, Routes } from '@angular/router';
 
 import { SettingsComponent}     from './settings.component';
 import { KeywordComponent}      from './keyword/keyword.component';
+import { NewFilterComponent }   from './new-filter/new-filter.component';
+import { CurrentFilterComponent } from './current-filter/current-filter.component';
 
 const mainRoutes: Routes = [
   {
@@ -15,6 +17,14 @@ const mainRoutes: Routes = [
       {
         path: 'keyword',
         component : KeywordComponent
+      },
+      {
+        path: 'newFilter',
+        component : NewFilterComponent
+      },
+      {
+        path : 'currentFilter',
+        component : CurrentFilterComponent
       }
     ] 
   }

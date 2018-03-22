@@ -10,3 +10,8 @@
 .lightColor{
     color: rgba(255,255,255,1);
 }
+
+.mat-menu-content{
+    padding-left : 8px;
+    padding-right: 8px;
+}

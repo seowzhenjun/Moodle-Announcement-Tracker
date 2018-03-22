@@ -7,6 +7,7 @@ import { MainComponent }        from './main.component';
 import { SidebarComponent }     from './sidebar/sidebar.component';
 import { TableComponent }       from './table/table.component';
 import { TopbarComponent }      from './topbar/topbar.component';
+import { DialogComponent }      from './dialog/dialog.component';
 import { EmailDetailComponent } from './email-detail/email-detail.component';
 import { SafeHtmlPipe }         from './email-detail/email-detail.component';
 
@@ -30,6 +31,7 @@ import { MainRoutingModule} from './main-routing.module';
     TableComponent,
     TopbarComponent,
     EmailDetailComponent,
+    DialogComponent,
     SafeHtmlPipe
   ],
   providers: [
@@ -37,6 +39,9 @@ import { MainRoutingModule} from './main-routing.module';
     CloudFunction,
     oAuth2Service,
     DataService
+  ],
+  entryComponents: [
+    DialogComponent
   ]
 })
 export class MainModule {}

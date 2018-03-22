@@ -57,7 +57,7 @@ export class LoginComponent implements OnInit {
                   obj['accessToken']=tokenObj[key];
                 }
               }
-              this._cf.addData(obj.email,token,obj.refreshToken).subscribe();
+              this._cf.addData(obj.email,obj.regToken,obj.refreshToken).subscribe();
             },
             err=>console.log(err)
           );

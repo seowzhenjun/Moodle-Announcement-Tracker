@@ -3,8 +3,8 @@ import { NgClass } from '@angular/common';
 import { Router, ActivatedRoute, ParamMap } from '@angular/router';
 import { GmailhttpService } from '../gmailhttp/gmailhttp.service';
 import { DataService } from '../data.service';
-import { DateService} from '../../services/date.service';
-// declare var Hammer;
+import { DateService } from '../../services/date.service';
+
 @Component({
   selector: 'app-table',
   templateUrl: './table.component.html',
@@ -13,9 +13,11 @@ import { DateService} from '../../services/date.service';
 export class TableComponent implements OnInit {
 
   list : any ;
-  currentIndex : number ; 
+  currentIndex : number[] = [-1];
+  highlightedElement : emailList[] = []; 
   isHighlight : boolean ;
-
+  showAllEmail : boolean = true;
+  
   constructor(
     private router : Router,
     private _service : DataService,
@@ -32,7 +34,8 @@ export class TableComponent implements OnInit {
     this._service.isHighlight.subscribe(
       isHighlight=>{
         if(!isHighlight){
-          this.currentIndex =null;
+          this.currentIndex = [-1];
+          this.highlightedElement=[];
         }
       this.isHighlight=isHighlight;
       }
@@ -44,16 +47,16 @@ export class TableComponent implements OnInit {
       });
   }
   
-  showDetail(id,payload){
-    this.router.navigate(['/main', id])
+  showDetail(emailList){
+    this.router.navigate(['/main', emailList.id])
     .then(() => {
       let obj = JSON.parse(window.localStorage.getItem('obj'));
       let email = JSON.parse(window.localStorage.getItem('email'));
 
-      this._service.sendPayload(payload);
-      this._http.modify(id,obj.email,obj.accessToken).subscribe(
+      this._service.sendPayload(emailList);
+      this._http.modify(emailList.id,obj.email,obj.accessToken).subscribe(
         (msg)=> {
-          let temp = email.findIndex(x => x.id === id);
+          let temp = email.findIndex(x => x.id === emailList.id);
           let ind = email[temp].labelIds.indexOf("UNREAD");
           if(ind != -1){
             email[temp].fontWeight = 'normal';
@@ -70,8 +73,9 @@ export class TableComponent implements OnInit {
   onContextMenu($event,i,element){
     $event.preventDefault();
     $event.stopPropagation();
-    this.currentIndex = i;
-    this._service.sendId(element);
+    this.currentIndex.push(i);
+    this.highlightedElement.push(element);
+    this._service.sendId(this.highlightedElement);
     this._service.sendHighlight(true);
   }
 
@@ -92,4 +96,16 @@ export class TableComponent implements OnInit {
     }
     return list;
   }
+}
+
+export interface emailList {
+  snippet       : string;
+  id            : string;
+  email         : string;
+  payload       : string;
+  internalDate  : string;
+  labelIds      : string[];
+  from          : string;
+  subject       : string;
+  important     : boolean;
 }

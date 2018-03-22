@@ -17,9 +17,14 @@ import {
   MatChipsModule,
   MatCheckboxModule,
   MatSnackBarModule,
-  MatSelectModule
+  MatSelectModule,
+  MatTooltipModule,
+  MatSortModule
 } from '@angular/material';
+import {MatPaginatorModule} from '@angular/material/paginator'; 
+import {MatDialogModule} from '@angular/material/dialog';
 import {MatStepperModule} from '@angular/material/stepper';
+import {MatDividerModule} from '@angular/material/divider';
 
 @NgModule({
   imports: [
@@ -38,8 +43,13 @@ import {MatStepperModule} from '@angular/material/stepper';
     MatChipsModule,
     MatCheckboxModule,
     MatSelectModule,
+    MatTooltipModule,
     MatSnackBarModule,
-    MatStepperModule
+    MatDialogModule,
+    MatStepperModule,
+    MatDividerModule,
+    MatPaginatorModule,
+    MatSortModule
   ],
   exports: [
     HttpClientModule,
@@ -57,8 +67,13 @@ import {MatStepperModule} from '@angular/material/stepper';
     MatChipsModule,
     MatCheckboxModule,
     MatSelectModule,
+    MatTooltipModule,
     MatSnackBarModule,
-    MatStepperModule
+    MatDialogModule,
+    MatStepperModule,
+    MatDividerModule,
+    MatPaginatorModule,
+    MatSortModule
   ]
 })
 export class SharedModule {}

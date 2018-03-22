@@ -1,3 +1,15 @@
-<mat-card class="emailContent">
-    <div fxLayout="column" fxLayoutAlign="start center" [innerHtml]="html | safeHtml"></div>
+<mat-card>
+    <mat-card-header>
+        <mat-card-title>{{emailList.subject}}</mat-card-title>
+    </mat-card-header>
+    <mat-divider></mat-divider>
+    <br/>
+    <mat-card-content>
+        <span>From : {{emailList.from}}</span>
+        <br/>
+        <div fxLayout="column" fxLayoutAlign="start center" [innerHtml]="html | safeHtml"></div>
+    </mat-card-content>
+    <mat-card-actions>
+        <button mat-button color="primary">Mark this email as important</button>
+    </mat-card-actions>
 </mat-card>

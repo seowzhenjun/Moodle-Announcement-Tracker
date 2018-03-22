@@ -28,9 +28,7 @@ export class AuthService {
       );
     }
     let obj = JSON.parse(window.localStorage.getItem('obj'));
-    this._cf.unsubscribe(obj.email,obj.regToken).subscribe(
-      ()=> console.log('call success')
-    );
+    this._cf.unsubscribe(obj.email,obj.regToken).subscribe();
     window.localStorage.removeItem('obj');
     window.localStorage.removeItem('email');
     window.localStorage.removeItem('historyId');

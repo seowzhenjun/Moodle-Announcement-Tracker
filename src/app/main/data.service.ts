@@ -11,12 +11,17 @@ export class DataService {
   private highlight = new BehaviorSubject<boolean>(false);
   private element = new BehaviorSubject<any>("");
   private view = new BehaviorSubject<boolean>(false);
+  private important = new BehaviorSubject<boolean>(false);
+  private title = new BehaviorSubject<any>("Inbox");
+
   currentPayload = this.payload.asObservable();
   currentEmailList = this.emailList.asObservable();
   currentNewEmail = this.newEmail.asObservable();
   isHighlight = this.highlight.asObservable();
   currentElement = this.element.asObservable();
   updateView = this.view.asObservable();
+  markAsImportant = this.important.asObservable();
+  currentTitle = this.title.asObservable();
 
 
   constructor() { }
@@ -43,5 +48,13 @@ export class DataService {
 
   sendUpdateView(){
     this.view.next(true);
+  }
+
+  sendMarkAsImportant(){
+    this.important.next(true);
+  }
+
+  sendTitle(data:any){
+    this.title.next(data);
   }
 }

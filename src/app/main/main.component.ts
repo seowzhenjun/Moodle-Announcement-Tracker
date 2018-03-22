@@ -8,6 +8,7 @@ import { ReadDatabase } from '../services/readDatabase.service';
 
 declare var window;
 declare var cordova;
+declare var PushNotification;
 
 @Component({
   selector: 'app-main',
@@ -29,6 +30,7 @@ export class MainComponent implements OnInit {
   userdetail : any = {};
   nextPageToken : string;
   fetch : boolean = true;
+  title : string;
 
   constructor(
     private _http    : GmailhttpService,
@@ -52,23 +54,26 @@ export class MainComponent implements OnInit {
       }
     }
 
-    document.addEventListener("deviceready",()=>{
-      window.FirebasePlugin.onNotificationOpen(function(notification) {
-        this._db.getAccessToken(obj.email);
-          // console.log(notification);
-          // cordova.plugins.notification.local.schedule({
-          //   title: 'My first notification',
-          //   text: 'Thats pretty easy...',
-          //   foreground: true,
-          //   actions: [
-          //     { id: 'yes', title: 'Yes' },
-          //     { id: 'no',  title: 'No' }
-          //   ]
-          // });
-      }, function(error) {
-          console.error(error);
-      });
-    },false);
+    this._service.currentTitle.subscribe(
+      title=>this.title=title
+    );
+
+    // document.addEventListener("deviceready",()=>{
+    //   window.FirebasePlugin.onNotificationOpen(function(notification) {
+    //       console.log(notification);
+    //       // cordova.plugins.notification.local.schedule({
+    //       //   title: 'My first notification',
+    //       //   text: 'Thats pretty easy...',
+    //       //   foreground: true,
+    //       //   actions: [
+    //       //     { id: 'yes', title: 'Yes' },
+    //       //     { id: 'no',  title: 'No' }
+    //       //   ]
+    //       // });
+    //   }, function(error) {
+    //       console.error(error);
+    //   });
+    // },false);
   }
 
   listMsg(nextPageToken?){

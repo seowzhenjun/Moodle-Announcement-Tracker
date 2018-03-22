@@ -21,6 +21,7 @@ export class EmailDetailComponent implements OnInit {
   id        : any;
   emailHTML : any;
   html      : SafeHtml;
+  emailList : any;
 
   constructor(
       private route: ActivatedRoute,
@@ -32,8 +33,10 @@ export class EmailDetailComponent implements OnInit {
     this.route.params.subscribe(params => this.id = params['id']);
     this._service.currentPayload.subscribe(message => 
       {
+        this.emailList = message;
+        console.log(this.emailList);
         if (message !== ""){
-          this.html = this.getBody(message);
+          this.html = this.getBody(message.payload);
         }
       },
     err=> console.log(err)

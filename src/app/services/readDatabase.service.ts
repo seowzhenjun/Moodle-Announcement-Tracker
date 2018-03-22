@@ -1,5 +1,8 @@
 import { Injectable } from '@angular/core';
 import * as firebase from 'firebase';
+import "rxjs/add/observable/of";
+import 'rxjs/add/observable/fromPromise';
+import {Observable} from 'rxjs/Rx';
 
 import { GmailhttpService } from '../main/gmailhttp/gmailhttp.service';
 import { oAuth2Service } from '../main/gmailhttp/oAuth2.service';
@@ -65,7 +68,6 @@ export class ReadDatabase {
     }
 
     changeLocalEmail(list){
-        console.log(list);
         let obj = JSON.parse(window.localStorage.getItem('obj'));
         list.forEach(element => {
             if(element.messagesAdded){
@@ -73,7 +75,7 @@ export class ReadDatabase {
                     msg=>{
                         this._http.getMsg(obj.email,msg.message.id,obj.accessToken).subscribe(
                             newEmail => {
-                                this.getEmailDetail(newEmail,false);
+                                this.getEmailDetail([newEmail],false);
                             },
                             err => console.log(err)
                         );
@@ -100,40 +102,48 @@ export class ReadDatabase {
     }
 
     getEmailDetail(email,push){
-
         let list = JSON.parse(window.localStorage.getItem('email'));
-        let emailList:emailList[] = list === null? [] : list; 
-        for(var i=0; i<email.length; i++){
-            let item = email[i].payload.headers;
-            let body = {} as emailList;
-      
-            body['snippet']     = email[i].snippet;
-            body['id']          = email[i].id;
-            body['payload']     = email[i].payload;
-            body['internalDate']= email[i].internalDate;
-            body['labelIds']    = email[i].labelIds;
-            body['important']   = false;
-            for(var x=0; x<item.length; x++){
-      
-              if(item[x].name === "From"){
-                body['from'] = item[x].value.split('<')[0];
-              }
-              if(item[x].name === "Subject"){
-                body['subject'] = item[x].value;
-              }
-            }
-            //console.log(body);
-            if(push){
-                emailList.push(body);
-            }
-            else{
-                console.log(body);
-                emailList.unshift(body);
-            }
-          }
-          //console.log(emailList);
-        window.localStorage.setItem('email',JSON.stringify(emailList));
-        this._service.sendList(emailList);
+        let emailList:emailList[] = list === null? [] : list;
+        let importantMsgArr;
+        this.getImportantMsg().then(
+            resolve => {
+                importantMsgArr=resolve;
+                for(var i=0; i<email.length; i++){
+                    let item = email[i].payload.headers;
+                    let body = {} as emailList;
+                    body['snippet']     = email[i].snippet;
+                    body['id']          = email[i].id;
+                    body['payload']     = email[i].payload;
+                    body['internalDate']= email[i].internalDate;
+                    body['labelIds']    = email[i].labelIds;
+                    body['important']   = false;
+                    for(let y=0; y<importantMsgArr.length; y++){
+                        if(email[i].id == importantMsgArr[y]){
+                            body['important']=true;
+                        }
+                    }
+                    for(var x=0; x<item.length; x++){
+              
+                      if(item[x].name === "From"){
+                        body['from'] = item[x].value.split('<')[0];
+                        body['email']= item[x].value.substring(item[x].value.lastIndexOf("<")+1,item[x].value.lastIndexOf(">"));
+                      }
+                      if(item[x].name === "Subject"){
+                        body['subject'] = item[x].value;
+                      }
+                    }
+                    if(push){
+                        emailList.push(body);
+                    }
+                    else{
+                        emailList.unshift(body);
+                    }
+                  }
+                window.localStorage.setItem('email',JSON.stringify(emailList));
+                this._service.sendList(emailList);
+            },
+            reject  => console.log(reject)
+        ); 
       }
 
     deleteEmail(id){
@@ -143,11 +153,82 @@ export class ReadDatabase {
         window.localStorage.setItem('email',JSON.stringify(emailList));
         this._service.sendList(emailList);
     }
+
+    getImportantMsg(){
+        let dbRef = this.database.ref('ImportantMsgId');
+        let obj = JSON.parse(window.localStorage.getItem('obj'));
+        let msgArr : any[] = [];
+        return new Promise((resolve,reject)=>{
+            dbRef.orderByChild('userName').equalTo(obj.email).once('value').then(
+                snapshot => {
+                    if(snapshot.val() !== null){
+                        //let dbkey = Object.keys(snapshot.val())[0];
+                        snapshot.forEach(childSnapshot=>{
+                            for(let key in childSnapshot.val().id){
+                                msgArr.push(key);
+                            }
+                        })
+                        resolve(msgArr);
+                    }
+                },
+                err => reject(err)
+            )
+        });
+    }
+
+    labelImportantMsg(msgIds){
+        let email = JSON.parse(window.localStorage.getItem('email'));
+        let temp;
+        for(let i=0; i<msgIds.length; i++){
+            temp = email.findIndex(x => x.id === msgIds[i]);
+            if(temp !== -1){
+                email[temp].important = true;
+            }
+        }
+        window.localStorage.setItem('email',JSON.stringify(email));
+    }
+
+    getFilterList() : Observable<filterList[]> {
+        let dbRef = this.database.ref('Keyword');
+        let obj = JSON.parse(window.localStorage.getItem('obj'));
+        let filterList :filterList[] = [];
+        let i : number = 1;
+
+        let mypromise = new Promise<filterList[]>((resolve,reject)=>{
+            dbRef.orderByChild('userName').equalTo(obj.email).once('value').then(
+                snapshot=>{
+                    if(snapshot.val() != null){
+                        snapshot.forEach(childSnapshot=>{
+                            for(var key in childSnapshot.val()){
+                                let body = {} as filterList;
+                                if(key != 'userName'){
+                                    body['position']=i;
+                                    body['from'] = key;
+                                    body['email']= childSnapshot.val()[key].from;
+                                    for(var childkey in childSnapshot.val()[key]){
+                                        if(childkey != 'from'){
+                                            body['subject'] = childkey;
+                                        }
+                                    }
+                                i++;
+                                filterList.push(body);
+                                }
+                            }
+                        })
+                        resolve(filterList);
+                    }
+                }
+            )
+        });
+        
+        return Observable.fromPromise(mypromise);
+    }
 }
 
 export interface emailList {
     snippet       : string;
     id            : string;
+    email         : string;
     payload       : string;
     internalDate  : string;
     labelIds      : string[];
@@ -155,3 +236,10 @@ export interface emailList {
     subject       : string;
     important     : boolean;
   }
+
+export interface filterList{
+    position: number;
+    from    : string;
+    subject : string;
+    email   : string;
+}

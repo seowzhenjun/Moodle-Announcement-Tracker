@@ -1,10 +1,14 @@
 <mat-toolbar *ngIf="!highlighted" color="primary" fxLayout="row" fxLayoutAlign="space-between center">
     <button mat-icon-button (click)="toggleMenu()" fxLayoutAlign="center center"><mat-icon fxLayoutAlign="center center">menu</mat-icon></button>
-    <span>Inbox</span>
-    <button mat-icon-button fxLayoutAlign="center center"><mat-icon fxLayoutAlign="center center">search</mat-icon></button>
+    <span>{{title}}</span>
+    <button mat-icon-button fxLayoutAlign="center center" [matMenuTriggerFor]="menu"><mat-icon fxLayoutAlign="center center">filter_list</mat-icon></button>
 </mat-toolbar>
+
+<mat-menu #menu="matMenu" yPosition="below">
+  <mat-checkbox color="primary" (change)="showChange($event)">Only show important emails</mat-checkbox>
+</mat-menu>
 
 <mat-toolbar *ngIf="highlighted" class="highlighted" fxLayout="row" fxLayoutAlign="space-between center">
   <button mat-icon-button fxLayoutAlign="center center" class="lightColor" (click)="cancelHighlight()"><mat-icon fxLayoutAlign="center center">arrow_back</mat-icon></button>
-  <button mat-icon-button fxLayoutAlign="center center" class="lightColor" (click)="markAsImportant()"><mat-icon fxLayoutAlign="center center">{{star}}</mat-icon></button>
+  <button mat-icon-button fxLayoutAlign="center center" class="lightColor" (click)="openDialog()"><mat-icon fxLayoutAlign="center center">{{star}}</mat-icon></button>
 </mat-toolbar>

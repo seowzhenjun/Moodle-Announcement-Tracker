@@ -1,9 +1,9 @@
 <div class="table">
   <mat-list dense>
     <mat-list-item id="matList" *ngFor="let element of list; let i = index"
-    [ngClass] = "i === currentIndex? 'selected matList' : 'matList'"
+    [ngClass] = "currentIndex.indexOf(i) !== -1 ? 'selected matList' : 'matList'"
     (contextmenu)='onContextMenu($event,i,element)' 
-    (click)="showDetail(element.id,element.payload)">
+    (click)="showDetail(element)">
       <h3 mat-line fxLayout='row' fxLayoutAlign='space-between none' [style.fontWeight]='element.fontWeight'>
         <span>{{element.from}}</span> 
         <div fxLayout="row" fxLayoutAlign=" center">
@@ -19,6 +19,5 @@
         <span class='subtitle'>{{element.snippet}}</span>
       </p>
     </mat-list-item>
-    <mat-divider></mat-divider>
   </mat-list> 
 </div>
