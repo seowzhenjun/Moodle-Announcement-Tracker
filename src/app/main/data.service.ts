@@ -13,6 +13,8 @@ export class DataService {
   private view = new BehaviorSubject<boolean>(false);
   private important = new BehaviorSubject<boolean>(false);
   private title = new BehaviorSubject<any>("Inbox");
+  private showImportant = new BehaviorSubject<boolean>(false);
+  private filterList = new BehaviorSubject<boolean>(false);
 
   currentPayload = this.payload.asObservable();
   currentEmailList = this.emailList.asObservable();
@@ -22,6 +24,8 @@ export class DataService {
   updateView = this.view.asObservable();
   markAsImportant = this.important.asObservable();
   currentTitle = this.title.asObservable();
+  showImportantEmail = this.showImportant.asObservable();
+  currentFilterList = this.filterList.asObservable();
 
 
   constructor() { }
@@ -56,5 +60,13 @@ export class DataService {
 
   sendTitle(data:any){
     this.title.next(data);
+  }
+
+  sendShowImportantemail(data:boolean){
+    this.showImportant.next(data);
+  }
+
+  sendFilterList(data:boolean){
+    this.filterList.next(data);
   }
 }

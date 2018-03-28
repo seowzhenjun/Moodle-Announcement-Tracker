@@ -27,10 +27,6 @@ export class SidebarComponent implements OnInit {
   ngOnInit() {
   }
 
-  filterMsg(){
-    this._cf.filterMsg('zjseo1@student.monash.edu','Michael Zenere ').subscribe(success=>console.log(success));
-  }
-
   inbox(){
     this.router.navigate(['/main/table']);
     this._service.sendTitle('Inbox');

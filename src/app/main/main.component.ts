@@ -22,7 +22,7 @@ export class MainComponent implements OnInit {
     if($event.srcElement.scrollingElement.scrollHeight - $event.srcElement.scrollingElement.scrollTop < window.innerHeight*1.2){
       if(this.fetch){
         this.fetch = !this.fetch;
-        this.listMsg(this.nextPageToken);
+        this.listMsg(window.localStorage.getItem('nextPageToken'));
       }
     }
   }
@@ -58,22 +58,22 @@ export class MainComponent implements OnInit {
       title=>this.title=title
     );
 
-    // document.addEventListener("deviceready",()=>{
-    //   window.FirebasePlugin.onNotificationOpen(function(notification) {
-    //       console.log(notification);
-    //       // cordova.plugins.notification.local.schedule({
-    //       //   title: 'My first notification',
-    //       //   text: 'Thats pretty easy...',
-    //       //   foreground: true,
-    //       //   actions: [
-    //       //     { id: 'yes', title: 'Yes' },
-    //       //     { id: 'no',  title: 'No' }
-    //       //   ]
-    //       // });
-    //   }, function(error) {
-    //       console.error(error);
-    //   });
-    // },false);
+    document.addEventListener("deviceready",()=>{
+      window.FirebasePlugin.onNotificationOpen(notification=> {
+          console.log(notification);
+          // cordova.plugins.notification.local.schedule({
+          //   title: 'My first notification',
+          //   text: 'Thats pretty easy...',
+          //   foreground: true,
+          //   actions: [
+          //     { id: 'yes', title: 'Yes' },
+          //     { id: 'no',  title: 'No' }
+          //   ]
+          // });
+      }, function(error) {
+          console.error(error);
+      });
+    },false);
   }
 
   listMsg(nextPageToken?){
@@ -94,7 +94,7 @@ export class MainComponent implements OnInit {
     var promiseArr = [];
     for(let key in result){
       if(key === "nextPageToken"){
-        this.nextPageToken = result[key];
+        window.localStorage.setItem('nextPageToken',result[key]);
       }
       if(key === "messages"){
         for(var i=0; i< result[key].length; i++){

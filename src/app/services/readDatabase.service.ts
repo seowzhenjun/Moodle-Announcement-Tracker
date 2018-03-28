@@ -51,6 +51,7 @@ export class ReadDatabase {
             let historyId = window.localStorage.getItem('historyId');
             this._http.historyList(obj.email,obj.accessToken,historyId).subscribe(
                 res => {
+                    console.log(res);
                     for(var key in res){
                         if(key==='historyId'){
                             window.localStorage.setItem('historyId',res[key]);
@@ -59,7 +60,9 @@ export class ReadDatabase {
                             })
                         }
                         if(key==='history'){
-                            this.changeLocalEmail(res[key]);
+                            for(let i=0; i<res[key].length; i++){
+                                this.changeLocalEmail(res[key]);
+                            }
                         }
                     }
                 }
@@ -168,10 +171,13 @@ export class ReadDatabase {
                                 msgArr.push(key);
                             }
                         })
-                        resolve(msgArr);
                     }
+                    resolve(msgArr);
                 },
-                err => reject(err)
+                err => {
+                    console.log(err); 
+                    reject(err);
+                }
             )
         });
     }
@@ -205,10 +211,8 @@ export class ReadDatabase {
                                     body['position']=i;
                                     body['from'] = key;
                                     body['email']= childSnapshot.val()[key].from;
-                                    for(var childkey in childSnapshot.val()[key]){
-                                        if(childkey != 'from'){
-                                            body['subject'] = childkey;
-                                        }
+                                    for(var childkey in childSnapshot.val()[key].keywords){
+                                        body['subject'] = childkey;
                                     }
                                 i++;
                                 filterList.push(body);

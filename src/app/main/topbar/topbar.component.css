@@ -11,7 +11,7 @@
     color: rgba(255,255,255,1);
 }
 
-.mat-menu-content{
+.mat-menu-content.ng-trigger.ng-trigger-fadeInItems{
     padding-left : 8px;
     padding-right: 8px;
 }

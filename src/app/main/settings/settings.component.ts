@@ -1,4 +1,4 @@
-import { Component, OnInit } from '@angular/core';
+import { Component } from '@angular/core';
 import { Router, RouterLink, ActivatedRoute } from '@angular/router';
 
 @Component({
@@ -6,10 +6,7 @@ import { Router, RouterLink, ActivatedRoute } from '@angular/router';
   templateUrl: './settings.component.html',
   styleUrls: ['./settings.component.css']
 })
-export class SettingsComponent implements OnInit {
-
-  ngOnInit() {
-  }
+export class SettingsComponent{
 
   constructor(
       private router: Router,

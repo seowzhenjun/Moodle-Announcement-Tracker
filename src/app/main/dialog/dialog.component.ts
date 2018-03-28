@@ -18,7 +18,7 @@ export class DialogComponent {
 
     markAsImportant(){
       this.setKeywords.setKeywords(this.data);
-      this.setKeywords.setImportantMsgId(this.data);
+      this.setKeywords.setImportantMsgId(this.data,true);
       this._service.sendMarkAsImportant();
     }
 

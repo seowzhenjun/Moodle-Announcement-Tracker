@@ -25,12 +25,4 @@ export class CloudFunction {
         return this.http.post(url,body);
     }
       
-    filterMsg(userId,from){
-        const url = 'https://us-central1-moodle-announcement-trac-347e7.cloudfunctions.net/showKeyword';
-        const body = {
-            userId : userId,
-            from : from
-        };
-        return this.http.post(url,body);
-    }
 }

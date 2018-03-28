@@ -16,7 +16,7 @@ export class TableComponent implements OnInit {
   currentIndex : number[] = [-1];
   highlightedElement : emailList[] = []; 
   isHighlight : boolean ;
-  showAllEmail : boolean = true;
+  showImportantEmail : boolean;
   
   constructor(
     private router : Router,
@@ -40,7 +40,9 @@ export class TableComponent implements OnInit {
       this.isHighlight=isHighlight;
       }
     );
-    this._service.currentPayload.subscribe();
+    this._service.showImportantEmail.subscribe(
+      show=>this.showImportantEmail=show
+    );
     this._service.currentEmailList.subscribe(
       list=>{
         this.list=this.checkUnread(list);
@@ -73,10 +75,21 @@ export class TableComponent implements OnInit {
   onContextMenu($event,i,element){
     $event.preventDefault();
     $event.stopPropagation();
-    this.currentIndex.push(i);
-    this.highlightedElement.push(element);
+    let hasHighlight : boolean ;
+    let ind = this.currentIndex.findIndex(x=> x === i);
+    let elementInd = this.highlightedElement.findIndex(x=> x.id === element.id);
+    if(ind!==-1){
+      this.currentIndex.splice(ind,1);
+      this.highlightedElement.splice(elementInd,1);
+    }
+    else{
+      this.currentIndex.push(i);
+      this.highlightedElement.push(element);
+    }
+    hasHighlight = this.highlightedElement.length ? true : false;
     this._service.sendId(this.highlightedElement);
-    this._service.sendHighlight(true);
+    this._service.sendHighlight(hasHighlight);
+    this._service.sendFilterList(false);
   }
 
   updateView(){

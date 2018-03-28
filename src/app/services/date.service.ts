@@ -23,11 +23,6 @@ export class DateService {
             let min = emailDate.getMinutes();
             let Min : any = min < 10? `0${min}` : `${min}`;
             let Hour : any = hour < 10? `0${hour}` : `${hour}`;
-            // if(min < 10){
-            //     Min = `0${min}`;
-            // }else{
-            //     Min = min;
-            // }
             return `${Hour}:${Min}`;
         }
         // Date is older than today

@@ -8,6 +8,7 @@ import { oAuth2Service } from '../main/gmailhttp/oAuth2.service';
 
 import { UserInfoService } from '../services/user-info.service';
 import { AuthService } from '../services/auth.service';
+import { SetKeywords } from '../services/setKeywords.service';
 
 declare var window;
 
@@ -27,7 +28,8 @@ export class LoginComponent implements OnInit {
     private _user     : UserInfoService,
     private _http     : GmailhttpService,
     private _cf       : CloudFunction,
-    private _oauth2   : oAuth2Service
+    private _oauth2   : oAuth2Service,
+    private _db       : SetKeywords
   ) {}
 
   ngOnInit(){}
@@ -41,7 +43,7 @@ export class LoginComponent implements OnInit {
       },
       obj => {
         // Get user's regToken
-        window.FirebasePlugin.getToken(token =>{
+        window.FirebasePlugin.onTokenRefresh(token =>{
           obj['regToken']=token;
           // Get user's refresh token
           this._oauth2.getRefreshToken(obj.serverAuthCode).subscribe(
@@ -57,12 +59,13 @@ export class LoginComponent implements OnInit {
                   obj['accessToken']=tokenObj[key];
                 }
               }
-              this._cf.addData(obj.email,obj.regToken,obj.refreshToken).subscribe();
+              this._cf.addData(obj.email,token,obj.refreshToken).subscribe();
             },
             err=>console.log(err)
           );
           // save this server-side and use it for push notifications to this device
           window.localStorage.setItem('obj',JSON.stringify(obj));
+          this._db.setupDb();
           this.authService.firstLogin = true;
           this.authService.isLoggedIn = true;
           

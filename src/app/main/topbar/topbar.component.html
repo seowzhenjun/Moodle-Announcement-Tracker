@@ -10,5 +10,9 @@
 
 <mat-toolbar *ngIf="highlighted" class="highlighted" fxLayout="row" fxLayoutAlign="space-between center">
   <button mat-icon-button fxLayoutAlign="center center" class="lightColor" (click)="cancelHighlight()"><mat-icon fxLayoutAlign="center center">arrow_back</mat-icon></button>
-  <button mat-icon-button fxLayoutAlign="center center" class="lightColor" (click)="openDialog()"><mat-icon fxLayoutAlign="center center">{{star}}</mat-icon></button>
+  <button mat-icon-button *ngIf="!filterList" fxLayoutAlign="center center" class="lightColor" (click)="updateHighlightedEmail()"><mat-icon fxLayoutAlign="center center">{{star}}</mat-icon></button>
+  <div fxLayout="row" fxLayoutAlign="center center" *ngIf="filterList">
+    <button mat-icon-button fxLayoutAlign="center center" class="lightColor" (click)="updateHighlightedEmail()"><mat-icon fxLayoutAlign="center center">delete</mat-icon></button>
+    <button mat-icon-button fxLayoutAlign="center center" class="lightColor" (click)="updateHighlightedEmail()"><mat-icon fxLayoutAlign="center center">mode_edit</mat-icon></button>
+  </div>
 </mat-toolbar>
