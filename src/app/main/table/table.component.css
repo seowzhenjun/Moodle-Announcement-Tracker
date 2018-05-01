@@ -7,7 +7,7 @@ mat-list-item{
 }
 
 .table{
-  height : 100vh;
+  height : calc(100vh - 56px);
 }
 
 .matList{
@@ -24,3 +24,17 @@ mat-list-item{
 }
 
 .material-icons.md-14 { width: 16px; height: 14px; font-size: 11px; }
+
+.spinner{
+  position:absolute;
+  z-index: 3;
+  margin-top: 1em;
+}
+
+.dc{
+  background-color: lightgrey;
+}
+
+.dcAlert{
+  font-weight: bold;
+}

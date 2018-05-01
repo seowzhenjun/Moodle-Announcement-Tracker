@@ -3,6 +3,7 @@ import { RouterModule, Routes }   from '@angular/router';
 
 import { HelpComponent }          from './help.component';
 import { GettingStartedComponent} from './gettingStarted/gettingStarted.component';
+import { FeedbackComponent }      from './feedback/feedback.component';
 
 const helpRoutes: Routes = [
   {
@@ -15,6 +16,10 @@ const helpRoutes: Routes = [
       {
         path: 'gettingStarted',
         component : GettingStartedComponent
+      },
+      {
+        path : 'feedback',
+        component : FeedbackComponent
       }
     ]
   },

@@ -1,7 +1,7 @@
 import { NgModule } from '@angular/core';
 import { CommonModule } from '@angular/common';
+import { FormsModule } from '@angular/forms';
 import { FlexLayoutModule } from "@angular/flex-layout";
-// import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { HttpClientModule } from '@angular/common/http';
 import {
   MatButtonModule,
@@ -19,12 +19,13 @@ import {
   MatSnackBarModule,
   MatSelectModule,
   MatTooltipModule,
-  MatSortModule
+  MatSortModule,
+  MatPaginatorModule,
+  MatDialogModule,
+  MatStepperModule,
+  MatDividerModule,
+  MatProgressSpinnerModule
 } from '@angular/material';
-import {MatPaginatorModule} from '@angular/material/paginator'; 
-import {MatDialogModule} from '@angular/material/dialog';
-import {MatStepperModule} from '@angular/material/stepper';
-import {MatDividerModule} from '@angular/material/divider';
 
 @NgModule({
   imports: [
@@ -49,7 +50,9 @@ import {MatDividerModule} from '@angular/material/divider';
     MatStepperModule,
     MatDividerModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    MatProgressSpinnerModule,
+    FormsModule
   ],
   exports: [
     HttpClientModule,
@@ -73,7 +76,9 @@ import {MatDividerModule} from '@angular/material/divider';
     MatStepperModule,
     MatDividerModule,
     MatPaginatorModule,
-    MatSortModule
+    MatSortModule,
+    MatProgressSpinnerModule,
+    FormsModule
   ]
 })
 export class SharedModule {}

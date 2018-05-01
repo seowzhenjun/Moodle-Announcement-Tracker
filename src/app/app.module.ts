@@ -1,4 +1,3 @@
-// import { BrowserModule } from '@angular/platform-browse
 import { BrowserAnimationsModule } from '@angular/platform-browser/animations';
 import { NgModule } from '@angular/core';
 import 'hammerjs';
@@ -12,10 +11,13 @@ import { PageNotFoundComponent} from './pageNotFound/pageNotFound.component';
 
 import { AuthGuard } from './services/auth-guard.service';
 import { AuthService } from './services/auth.service';
-import { UserInfoService } from './services/user-info.service';
-import { ReadDatabase } from './services/readDatabase.service';
-import { SetKeywords } from './services/setKeywords.service';
+import { CloudFunctionService } from './services/cloud-function.service';
 import { DateService } from './services/date.service';
+import { GmailhttpService } from './services/gmailhttp.service';
+import { oAuth2Service } from './services/oAuth2.service';
+import { ReadDBService } from './services/read-db.service';
+import { WriteDBService } from './services/write-db.service';
+import { UserInfoService } from './services/user-info.service';
 
 @NgModule({
   declarations: [
@@ -31,12 +33,15 @@ import { DateService } from './services/date.service';
   ],
   exports: [],
   providers: [
-    UserInfoService,
     AuthGuard,
     AuthService,
-    ReadDatabase,
-    SetKeywords,
-    DateService
+    CloudFunctionService,
+    DateService,
+    GmailhttpService,
+    oAuth2Service,
+    ReadDBService,
+    WriteDBService,
+    UserInfoService
   ],
   bootstrap: [AppComponent]
 })

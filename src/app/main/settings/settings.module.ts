@@ -3,8 +3,6 @@ import { CommonModule }         from '@angular/common';
 
 import { SharedModule }         from '../../shared.module';
 import { SettingsComponent }    from './settings.component';
-import { NewFilterComponent }   from './new-filter/new-filter.component';
-import { CurrentFilterComponent } from './current-filter/current-filter.component';
 
 import { SettingsRoutingModule} from './settings-routing.module';
 import { GeneralSettingsComponent } from './general-settings/general-settings.component';
@@ -17,8 +15,6 @@ import { GeneralSettingsComponent } from './general-settings/general-settings.co
   ],
   declarations: [
     SettingsComponent,
-    NewFilterComponent,
-    CurrentFilterComponent,
     GeneralSettingsComponent
   ],
   providers: []

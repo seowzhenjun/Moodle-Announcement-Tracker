@@ -1,6 +1,6 @@
 import {Component, Inject} from '@angular/core';
 import {MatDialog, MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
-import { SetKeywords } from '../../services/setKeywords.service';
+import { WriteDBService } from '../../services/write-db.service';
 import { DataService } from '../data.service';
 
 @Component({
@@ -10,9 +10,11 @@ import { DataService } from '../data.service';
 })
 export class DialogComponent {
 
+  selected = 'email';
+
   constructor(
     private _service : DataService,
-    private setKeywords : SetKeywords,
+    private setKeywords : WriteDBService,
     public dialog: MatDialog,
     @Inject(MAT_DIALOG_DATA) public data: any) {}
 

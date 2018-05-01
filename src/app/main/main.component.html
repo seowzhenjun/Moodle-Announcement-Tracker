@@ -3,8 +3,8 @@
     fxLayout="column" fxLayoutAlign="start center">
         <app-sidebar [userDetail]="userdetail"></app-sidebar>
     </mat-sidenav>
-    <mat-sidenav-content fxLayout="column" fxLayoutAlign=" none">
-        <app-topbar class="topbar" (menuToggle)="sidenav.toggle()" [title]="title"></app-topbar>
+    <mat-sidenav-content fxLayout="column">
+        <app-topbar class="topbar" (menuToggle)="sidenav.toggle()" [title]="_service.title"></app-topbar>
         <router-outlet></router-outlet>
     </mat-sidenav-content>
 </mat-sidenav-container>

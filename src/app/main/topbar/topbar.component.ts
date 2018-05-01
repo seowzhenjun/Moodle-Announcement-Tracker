@@ -2,9 +2,10 @@ import { Component, Inject, Input, OnInit, Output, EventEmitter } from '@angular
 import { MatDialog,MatDialogRef, MAT_DIALOG_DATA} from '@angular/material';
 import { MatSnackBar } from '@angular/material';
 
+import { WelcomeDialogComponent } from '../welcome-dialog/welcome-dialog.component';
 import { DialogComponent } from '../dialog/dialog.component';
 import { DataService } from '../data.service';
-import { SetKeywords } from '../../services/setKeywords.service';
+import { WriteDBService } from '../../services/write-db.service';
 
 @Component({
   selector: 'app-topbar',
@@ -15,19 +16,20 @@ export class TopbarComponent implements OnInit {
   @Input() title : string;
   @Output() menuToggle = new EventEmitter<boolean>();
 
+  currentFilterList : any ;
   filterList  : boolean = false;
   toggle      : boolean = true;
   highlighted : boolean ;
   star        : string = 'star_border';
-  element     : any;
+  element     : any = '';
   impMark     : boolean = false;
   fileNameDialogRef: MatDialogRef<DialogComponent>;
 
   constructor(
-    private _service : DataService,
+    public _service : DataService,
     private snackBar : MatSnackBar,
     private dialog   : MatDialog,
-    private keywords : SetKeywords
+    private keywords : WriteDBService
   ) { }
 
   ngOnInit() {
@@ -51,11 +53,20 @@ export class TopbarComponent implements OnInit {
       important => {
         if(important){
           this.markAsImportant(this.element,true);
+          this.element = '';
         }
       }
     );
     this._service.currentFilterList.subscribe(
-      filterList => this.filterList = filterList
+      filterList => {
+        if(filterList.length > 0 ){
+          this.currentFilterList =filterList;
+          this.filterList = true;
+        }
+        else{
+          this.filterList = false;
+        }
+      }
     );
   }
 
@@ -65,6 +76,7 @@ export class TopbarComponent implements OnInit {
 
   cancelHighlight(){
     this._service.sendHighlight(false);
+    this.element = '';
   }
 
   updateHighlightedEmail(){
@@ -77,6 +89,10 @@ export class TopbarComponent implements OnInit {
   }
 
   markAsImportant(element,imp:boolean){
+    if(element === ''){
+      this.cancelHighlight();
+      return;
+    }
     let email = JSON.parse(window.localStorage.getItem('email'));
     let temp ;
     let message = imp? "Email marked as important" : "Email marked as not important";
@@ -119,17 +135,29 @@ export class TopbarComponent implements OnInit {
     }
     this.fileNameDialogRef = this.dialog.open(DialogComponent, {
       data : dialogList,
-      autoFocus: false
+      autoFocus: false,
+      maxWidth : '90vw',
+      width : '90vw'
     });
-
-    this.fileNameDialogRef.afterClosed().subscribe(
-      close => console.log(close)
-    )
   }
 
   showChange($event){
-    this._service.sendShowImportantemail($event.checked);
-    console.log($event.checked);
+    this._service.showImportantEmail = $event.checked;
+  }
+
+  editCurrentFilter(){
+    this.fileNameDialogRef = this.dialog.open(DialogComponent, {
+      data : this.currentFilterList,
+      autoFocus: false,
+      maxWidth : '90vw',
+      width : '90vw'
+    });
+  }
+
+  deleteFilter(){
+    this.keywords.setKeywords(this.currentFilterList,false);
+    // this._service.sendRemoveFilter();
+    this.cancelHighlight();
   }
 }
 

@@ -19,4 +19,8 @@ export class HelpComponent implements OnInit {
   gettingStarted(){
     this.router.navigate(['gettingStarted'],{relativeTo:this.route});
   }
+
+  feedback(){
+    this.router.navigate(['feedback'],{relativeTo:this.route});
+  }
 }

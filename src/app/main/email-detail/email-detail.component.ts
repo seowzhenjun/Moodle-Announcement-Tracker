@@ -31,16 +31,19 @@ export class EmailDetailComponent implements OnInit {
 
   ngOnInit() {
     this.route.params.subscribe(params => this.id = params['id']);
-    this._service.currentPayload.subscribe(message => 
-      {
-        this.emailList = message;
-        console.log(this.emailList);
-        if (message !== ""){
-          this.html = this.getBody(message.payload);
-        }
-      },
-    err=> console.log(err)
-    );
+    this.emailList = this._service.payload;
+    if(this._service.payload != ""){
+      this.html = this.getBody(this._service.payload.payload);
+    }
+    // this._service.currentPayload.subscribe(message => 
+    //   {
+    //     this.emailList = message;
+    //     if (message !== ""){
+    //       this.html = this.getBody(message.payload);
+    //     }
+    //   },
+    // err=> console.log(err)
+    // );
   }
 
   ngAfterViewInit(){

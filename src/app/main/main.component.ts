@@ -1,134 +1,103 @@
-import { Component, OnInit, HostListener } from '@angular/core';
+import { Component } from '@angular/core';
 import * as firebase from 'firebase';
-
-import { GmailhttpService } from './gmailhttp/gmailhttp.service';
+//import { MatSidenav } from '@angular/material';
+import { Router, NavigationStart } from '@angular/router';
 import { DataService } from './data.service';
-import { UserInfoService } from '../services/user-info.service';
-import { ReadDatabase } from '../services/readDatabase.service';
+import { ReadDBService } from '../services/read-db.service';
+import { AuthService } from '../services/auth.service';
+import { GmailhttpService } from '../services/gmailhttp.service';
 
 declare var window;
-declare var cordova;
-declare var PushNotification;
+declare var navigator;
 
 @Component({
   selector: 'app-main',
   templateUrl: './main.component.html',
   styleUrls: ['./main.component.css']
 })
-export class MainComponent implements OnInit {
-
-  @HostListener('window:scroll',['$event'])
-  checkSCrollHeight($event){
-    if($event.srcElement.scrollingElement.scrollHeight - $event.srcElement.scrollingElement.scrollTop < window.innerHeight*1.2){
-      if(this.fetch){
-        this.fetch = !this.fetch;
-        this.listMsg(window.localStorage.getItem('nextPageToken'));
-      }
-    }
-  }
+export class MainComponent{
 
   userdetail : any = {};
-  nextPageToken : string;
-  fetch : boolean = true;
-  title : string;
-
-  constructor(
-    private _http    : GmailhttpService,
-    private _service : DataService,
-    private _user    : UserInfoService,
-    private _db      : ReadDatabase ) 
-    {}
+  
+  constructor( 
+    public _service : DataService,
+    private router : Router,
+    private auth : AuthService,
+    private _db : ReadDBService,
+    private _http: GmailhttpService
+    //private sidenav : MatSidenav
+  ) {}
 
   ngOnInit() {
     let obj = JSON.parse(window.localStorage.getItem('obj'));
-    if(obj !== ""){
-      this.userdetail = obj;
-      // Use email from local storage if any
-      let localStorageEmail = window.localStorage.getItem('email');
-      if(localStorageEmail !== null){
-        this._db.getAccessToken(obj.email);
-        this._service.sendList(JSON.parse(localStorageEmail));
-      }
-      else{
-        this.listMsg();
-      }
+    if(navigator.connection.type !== "none" && !this.auth.firstLogin){
+      this._db.getAccessToken(obj.email);
     }
 
-    this._service.currentTitle.subscribe(
-      title=>this.title=title
-    );
+    if(obj !== ""){
+      this.userdetail = obj;
+    }
 
-    document.addEventListener("deviceready",()=>{
-      window.FirebasePlugin.onNotificationOpen(notification=> {
-          console.log(notification);
-          // cordova.plugins.notification.local.schedule({
-          //   title: 'My first notification',
-          //   text: 'Thats pretty easy...',
-          //   foreground: true,
-          //   actions: [
-          //     { id: 'yes', title: 'Yes' },
-          //     { id: 'no',  title: 'No' }
-          //   ]
-          // });
-      }, function(error) {
+    document.addEventListener('deviceready',()=>{
+      document.addEventListener('offline',()=>{
+        this._service.disconnect = true;
+      },false);
+      document.addEventListener("online", ()=>{
+        this._db.getAccessToken(obj.email);
+        this._service.disconnect = false;
+      }, false);
+      window.FirebasePlugin.onNotificationOpen(
+        notification=> {
+          if(notification.tap === false){
+            let obj = JSON.parse(window.localStorage.getItem('obj'));
+            this._http.getMsg(obj.email,notification.id,obj.accessToken).subscribe(
+              msg => {
+                this._db.getEmailDetail([msg],false);
+              }
+            );
+          }
+        }, error=> {
           console.error(error);
       });
     },false);
-  }
 
-  listMsg(nextPageToken?){
-    let obj = JSON.parse(window.localStorage.getItem('obj'));
-    if(!nextPageToken){
-      nextPageToken = null;
-    }
-    this._http.listMsg(obj.email,obj.accessToken,nextPageToken)
-    .subscribe(
-      result => {
-        this.getMsg(obj, result);
-      },
-      err => console.log(err)
-    );
-  }
-  
-  getMsg(obj, result){
-    var promiseArr = [];
-    for(let key in result){
-      if(key === "nextPageToken"){
-        window.localStorage.setItem('nextPageToken',result[key]);
-      }
-      if(key === "messages"){
-        for(var i=0; i< result[key].length; i++){
-          promiseArr[i] = new Promise ((resolve) =>{
-              this._http.getMsg(obj.email,result[key][i].id,obj.accessToken)
-              .subscribe(
-              result => resolve(result),
-              err => console.log(err)
-            );
-          }) 
+    this.router.events.subscribe((e)=>{
+      if(e instanceof NavigationStart){
+        switch(e.url){
+          case '/main/table':
+            this._service.title = 'Inbox';
+            break;
+          case '/main/filter':
+            this._service.title = 'Filter';
+            break;
+          case '/main/settings':
+            this._service.title = 'Settings';
+            break;
+          case '/main/help':
+            this._service.title = 'Help';
+            break;
+          case '/main/help/feedback':
+            this._service.title = 'Feedback';
+            break;
+          default:
+            break;
         }
-        Promise.all(promiseArr).then(val => {
-          let msgArr = this.sortMsg(val);
-          this._db.getEmailDetail(msgArr,true);
-          this.fetch = true;
-        });
       }
-    };
+    });
   }
 
-  sortMsg(msgArr){
-    let swap : boolean = true;
-    let temp;
-    while(swap){
-    swap = false;
-      for (var i = 0 ; i < msgArr.length-1; i ++){
-          if (msgArr[i].internalDate<msgArr[i+1].internalDate){
-              temp = msgArr[i+1];
-              msgArr[i+1] = msgArr[i];
-              msgArr[i] = temp;
-              swap = true;
-          }
-      }
-    }
-    return msgArr;
-  }
+  // onChange($event){
+  //   console.log($event);
+  //   if($event == true){
+  //     document.addEventListener("deviceready", ()=>{
+  //       document.addEventListener("backbutton", ()=>{
+  //         window.history.back();
+  //         //this.sidenav.close();
+  //       }, false);
+  //     }, false);
+  //   }
+  //   else{
+  //     //document.removeEventListener("backbutton", ()=>{},false);
+  //   }
+  // }
 }

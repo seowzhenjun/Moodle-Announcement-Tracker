@@ -15,7 +15,14 @@ const mainRoutes: Routes = [
     children : [
       {
         path: 'table',
-        component : TableComponent
+        component : TableComponent,
+        data : {
+          title : 'My Inbox'
+        }
+      },
+      {
+        path: 'filter',
+        loadChildren : 'app/main/filter/filter.module#FilterModule'
       },
       {
         path: 'settings',

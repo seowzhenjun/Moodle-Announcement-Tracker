@@ -2,8 +2,8 @@ import { Injectable } from '@angular/core';
 import { Router } from '@angular/router';
 import * as firebase from 'firebase';
 
-import { GmailhttpService } from '../main/gmailhttp/gmailhttp.service';
-import { CloudFunction } from '../main/gmailhttp/cloudFunction.service';
+import { GmailhttpService } from './gmailhttp.service';
+import { CloudFunctionService } from './cloud-function.service';
 
 declare var window;
 
@@ -18,7 +18,7 @@ export class AuthService {
   constructor(
     private router : Router,
     private _http : GmailhttpService,
-    private _cf : CloudFunction
+    private _cf : CloudFunctionService
   ){}
 
   logout(): void {
@@ -29,9 +29,11 @@ export class AuthService {
     }
     let obj = JSON.parse(window.localStorage.getItem('obj'));
     this._cf.unsubscribe(obj.email,obj.regToken).subscribe();
+    window.localStorage.setItem('showTutorial','true');
     window.localStorage.removeItem('obj');
     window.localStorage.removeItem('email');
     window.localStorage.removeItem('historyId');
+    window.localStorage.removeItem('nextPageToken');
     this.router.navigate(['/login'],{replaceUrl:true});
   }
 }

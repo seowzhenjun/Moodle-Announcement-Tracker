@@ -2,13 +2,13 @@ import { Component, OnInit } from '@angular/core';
 import { Router } from '@angular/router';
 import * as firebase from 'firebase';
 
-import { GmailhttpService } from '../main/gmailhttp/gmailhttp.service';
-import { CloudFunction } from '../main/gmailhttp/cloudFunction.service';
-import { oAuth2Service } from '../main/gmailhttp/oAuth2.service';
+import { GmailhttpService } from '../services/gmailhttp.service';
+import { CloudFunctionService } from '../services/cloud-function.service';
+import { oAuth2Service } from '../services/oAuth2.service';
 
 import { UserInfoService } from '../services/user-info.service';
 import { AuthService } from '../services/auth.service';
-import { SetKeywords } from '../services/setKeywords.service';
+import { WriteDBService } from '../services/write-db.service';
 
 declare var window;
 
@@ -27,12 +27,16 @@ export class LoginComponent implements OnInit {
     private router    : Router,
     private _user     : UserInfoService,
     private _http     : GmailhttpService,
-    private _cf       : CloudFunction,
+    private _cf       : CloudFunctionService,
     private _oauth2   : oAuth2Service,
-    private _db       : SetKeywords
+    private _db       : WriteDBService
   ) {}
 
-  ngOnInit(){}
+  ngOnInit(){
+    if(window.localStorage.getItem('showTutorial')===null){
+      window.localStorage.setItem('showTutorial','true');
+    }
+  }
 
   login() {
     window.plugins.googleplus.login(
@@ -60,6 +64,11 @@ export class LoginComponent implements OnInit {
                 }
               }
               this._cf.addData(obj.email,token,obj.refreshToken).subscribe();
+              this._http.watch(obj.email,obj.accessToken).subscribe(
+                res => {
+                  window.localStorage.setItem('historyId',res['historyId']);
+                }
+              )
             },
             err=>console.log(err)
           );
@@ -71,7 +80,7 @@ export class LoginComponent implements OnInit {
           
           let redirect = this.authService.redirectUrl ? this.authService.redirectUrl : '/main/table';
           this.router.navigate([redirect],{replaceUrl:true});
-        }, function(error) {
+        }, error=> {
             console.error(error);
         });
       },
